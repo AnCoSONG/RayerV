@@ -89,7 +89,7 @@ void TransferSocket::sendFile(const QUrl &url)
         //更新界面
         emit sendFileStatus("Start");
 
-        qDebug()<<"开始传送文件";
+        qDebug()<<"开始传送文件"<<url.toLocalFile();
         QTime time;
         time.start();
         QFile file(url.toLocalFile()); // 拿到路径

@@ -2,6 +2,7 @@
 
 DeviceFinder::DeviceFinder(QObject *parent):QUdpSocket(parent)
 {
+    timer = new QTimer;
     if(!bind(QHostAddress::Any, Port::UDP_PORT)){
         qDebug()<<"绑定失败";
     }
@@ -36,7 +37,7 @@ void DeviceFinder::setDeviceInfo(DeviceInfo *deviceInfo)
 void DeviceFinder::startDiscover(){
     access_point.clear();
     qDebug()<<"Start discover"<<endl;
-    timer = new QTimer;
+
     connect(timer, &QTimer::timeout, this, &DeviceFinder::discover);
     timer->start(1000);
 
