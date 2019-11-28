@@ -58,6 +58,8 @@ private slots:
 
     void on_hasNewConnection(QTcpSocket *socket);
 
+    void on_establishConnection(QString res);
+
 public:
     Rayer(QWidget *parent = nullptr);
     ~Rayer();

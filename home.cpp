@@ -39,6 +39,8 @@ void Rayer::on_connectToDevice_clicked()
     emit statusChange("正在连接");
     transfer->setAccessPoint(currentSelectedDevice);
 
+    connect(transfer->getTransferSocket(), &TransferSocket::establishConnection, this, &Rayer::on_establishConnection);
+
 }
 
 void Rayer::on_chooseFile_clicked()
@@ -111,4 +113,18 @@ void Rayer::on_hasNewConnection(QTcpSocket *socket)
     emit statusChange("已停止嗅探");
     ui->startDiscover->setText("开始嗅探");
     emit statusChange("已被动建立连接");
+}
+
+void Rayer::on_establishConnection(QString res)
+{
+    if(res=="GG"){
+        emit statusChange("建立连接失败");
+    }else if(res=="Yeah"){
+        qDebug()<<"停止嗅探";
+        finder->stopDiscover();
+        emit statusChange("已停止嗅探");
+        ui->startDiscover->setText("开始嗅探");
+        emit statusChange("已连接:"+currentSelectedDevice.left(4));
+
+    }
 }
