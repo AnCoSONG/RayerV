@@ -15,6 +15,11 @@ void ConnectionReceiver::beginListen()
     }
 }
 
+ConnectionReceiver::~ConnectionReceiver()
+{
+    qDebug()<<"Close Connection Receiver";
+}
+
 void ConnectionReceiver::incomingConnection(qintptr handle){
     QThread *thread = new QThread;
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);

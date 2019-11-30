@@ -12,6 +12,8 @@ class ConnectionReceiver : public QTcpServer
 public:
     ConnectionReceiver(QObject *parent=nullptr);
     void beginListen();
+    ~ConnectionReceiver();
+
 
 signals:
     void hasNewConnection(QTcpSocket *socket);

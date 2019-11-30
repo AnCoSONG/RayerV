@@ -24,6 +24,10 @@ Rayer::Rayer(QWidget *parent)
 Rayer::~Rayer()
 {
     delete ui;
+//    delete info;
+//    delete finder;
+//    delete manager;
+//    delete transfer;
 }
 
 void Rayer::init(){
@@ -76,6 +80,7 @@ void Rayer::on_startDiscover_toggled(bool checked)
         finder->startDiscover();
         emit statusChange("正在嗅探");
         ui->startDiscover->setText("停止嗅探");
+        ui->deviceList->clear(); //开始嗅探就清除
 
     }else{
         qDebug()<<"停止嗅探";
@@ -119,6 +124,7 @@ void Rayer::on_hasNewConnection(QTcpSocket *socket)
     emit statusChange("已停止嗅探");
     ui->startDiscover->setText("开始嗅探");
     emit statusChange("已被动建立连接");
+    ui->startDiscover->setChecked(false);
 }
 
 void Rayer::on_establishConnection(QString res)
@@ -130,7 +136,8 @@ void Rayer::on_establishConnection(QString res)
         finder->stopDiscover();
         emit statusChange("已停止嗅探");
         ui->startDiscover->setText("开始嗅探");
-        emit statusChange("已连接:"+currentSelectedDevice.left(4));
+        emit statusChange("已连接:"+currentSelectedDevice);
+        ui->startDiscover->setChecked(false);
 
     }
 }
@@ -138,8 +145,14 @@ void Rayer::on_establishConnection(QString res)
 void Rayer::on_sendFileStatusChange(QString status)
 {
     qDebug()<<"发送状态更新";
-    emit statusChange(status);
-    QMessageBox::information(nullptr, "成功","已发送"); // 发送成功弹出确认。
+    if(status!="Done"){
+        emit statusChange(status);
+    }else {
+        emit statusChange("已连接:"+currentSelectedDevice);
+        QMessageBox::information(nullptr, "成功","已发送"); // 发送成功弹出确认。
+    }
+
+
 }
 
 void Rayer::on_add_recv_file(QString filename, QString filesize, QString status)

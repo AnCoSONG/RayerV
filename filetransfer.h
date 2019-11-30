@@ -14,6 +14,7 @@ class FileTransfer : public QObject
 
 public:
     static FileTransfer* getInstance();
+    ~FileTransfer();
     Q_INVOKABLE void setAccessPoint(const QString &name); //设置
     Q_INVOKABLE void sendFile(const QUrl &url);
 //    Q_INVOKABLE bool buildConnection();
@@ -22,7 +23,8 @@ public:
     ConnectionReceiver *getConnectionReceiver();
 private:
     FileTransfer(QObject *parent = nullptr);
-    ~FileTransfer();
+
+    QList<QThread *> threadLists;
     DeviceInfo* info;
     TransferSocket* client;
     ConnectionReceiver* server;

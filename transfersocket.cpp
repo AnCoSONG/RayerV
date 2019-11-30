@@ -95,20 +95,20 @@ void TransferSocket::sendFile(const QUrl &url)
         QTime time;
         time.start();
         QFile file(url.toLocalFile()); // 拿到路径
-//        file.setFileName("123");
-//        qDebug()<<"444";
 //        QFile file(QQmlFile::urlToLocalFileOrQrc(url)); // QML界面
         file.open(QIODevice::ReadOnly);
-//        qDebug()<<"555";
 
         qint32 offset = 0;
         qint32 totalSize = qint32(file.size());
-        QString fileName = QFileInfo(url.toString()).fileName();
+        QString fileName = QFileInfo(url.toLocalFile()).fileName(); // 从toString修改
+//        QString fileNameS = QFileInfo(url.toString()).fileName();
+//        qDebug()<<fileName<<" "<<fileNameS;
+//        qDebug()<<"fileName:"<<fileName<<"\nlocal8bit"<<fileName.toLocal8Bit()<<endl<<fileName.toUtf8();
         while (offset < totalSize) {
             file.seek(offset);
             QByteArray dataBlock = file.read(maxBlockSize);
             FileBlock block = { qint16(dataBlock.size()), offset, totalSize,
-                                fileName.toLocal8Bit(), dataBlock};
+                                fileName.toUtf8(), dataBlock};
             QByteArray data;
             QDataStream out(&data, QIODevice::WriteOnly);
             out.setVersion(QDataStream::Qt_5_13);
@@ -127,7 +127,7 @@ void TransferSocket::sendFile(const QUrl &url)
         file.close();
         qDebug()<<"发送完毕";
         // 显示发送完毕的信号
-        emit sendFileStatus("已发送");
+        emit sendFileStatus("Done");
     });
 
 }
@@ -146,7 +146,7 @@ void TransferSocket::processRecvBlock()
             return; //说明读完了，这是递归读取结束的标志
         }
 
-        QString fileName = QString::fromLocal8Bit(block.fileName);
+        QString fileName = QString::fromUtf8(block.fileName);
 
         if(!socketConfig->recvFiles[fileName].file){
             //如果是新接收的文件
