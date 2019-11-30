@@ -141,7 +141,7 @@ void TransferSocket::processRecvBlock()
         in.setVersion(QDataStream::Qt_5_13);
         in >> block;
         if(block.isEmpty()){
-            qDebug()<<"接收完毕";
+//            qDebug()<<"接收完毕";
             //emit recvFileStatus("接收完成");
             return; //说明读完了，这是递归读取结束的标志
         }
@@ -172,10 +172,13 @@ void TransferSocket::processRecvBlock()
             // 当前读入量比总量小，即还没读完
             socketConfig->recvFiles[fileName].size += block.blockSize;
             socketConfig->recvFiles[fileName].file->write(block.dataBlock);
-            qDebug()<<block; //当前block信息打印出来
+            //qDebug()<<block; //当前block信息打印出来
 //            emit recvFileStatus(QString::number(socketConfig->recvFiles[fileName].size));
             QMetaObject::invokeMethod(FileMangaer::getInstance(),"updateRecvFile", Q_ARG(QString, fileName)
-                                      ,Q_ARG(QString, QString::number(socketConfig->recvFiles[fileName].size)));
+                                      ,Q_ARG(QString,
+                                             QString::number(
+                                                 socketConfig->recvFiles[fileName].size)));
+
         }
 
         if (socketConfig->recvFiles[fileName].size == block.fileSize){
@@ -189,10 +192,11 @@ void TransferSocket::processRecvBlock()
                                       ,Q_ARG(QString, "已完成"));
         }
 
-        if(time.elapsed() >= 1000 ){
-            // 通知进度更新
-            time.restart();
-        }
+//        if(time.elapsed() >= 1000 ){
+//            // 通知进度更新
+//            time.restart();
+
+//        }
 
         socketConfig->recvData.remove(0, block.size());
         if ( socketConfig->recvData.size() > 0 ){

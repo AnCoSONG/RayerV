@@ -15,8 +15,8 @@ Rayer::Rayer(QWidget *parent)
     connect(this,&Rayer::statusChange,this,&Rayer::on_statusChange);
     connect(finder, &DeviceFinder::updateDeviceList, this,&Rayer::on_updateDeviceList);
     connect(transfer->getConnectionReceiver(),&ConnectionReceiver::hasNewConnection, this, &Rayer::on_hasNewConnection);
-    connect(manager, &FileMangaer::recv_new_file, this, &Rayer::on_add_recv_file);
-    connect(manager, &FileMangaer::update_recv_file, this, &Rayer::on_update_recv_file);
+    connect(manager, &FileMangaer::recv_new_file, this, &Rayer::on_add_recv_file,Qt::QueuedConnection);
+    connect(manager, &FileMangaer::update_recv_file, this, &Rayer::on_update_recv_file,Qt::QueuedConnection);
 
 }
 
@@ -123,12 +123,9 @@ void Rayer::on_deviceList_itemClicked(QListWidgetItem *item)
 
 void Rayer::on_hasNewConnection(QTcpSocket *socket)
 {
-    qDebug()<<"停止嗅探";
-    finder->stopDiscover();
-    emit statusChange("已停止嗅探");
-    ui->startDiscover->setText("开始嗅探");
-    emit statusChange("已被动建立连接");
     ui->startDiscover->setChecked(false);
+    emit statusChange("已被动建立连接");
+
 }
 
 void Rayer::on_establishConnection(QString res)
@@ -136,12 +133,9 @@ void Rayer::on_establishConnection(QString res)
     if(res=="GG"){
         emit statusChange("建立连接失败");
     }else if(res=="Yeah"){
-        qDebug()<<"停止嗅探";
-        finder->stopDiscover();
-        emit statusChange("已停止嗅探");
-        ui->startDiscover->setText("开始嗅探");
-        emit statusChange("已连接:"+currentSelectedDevice);
         ui->startDiscover->setChecked(false);
+        emit statusChange("已连接:"+currentSelectedDevice);
+
 
     }
 }
@@ -164,21 +158,29 @@ void Rayer::on_add_recv_file(QString filename, QString filesize, QString status)
     qDebug()<<"Filename: "<<filename<<endl
             <<"Filesize: "<<filesize<<endl
             <<"Status: "<<status<<endl;
-    // 添加
-    int row = ui->recvFileList->rowCount();
-    ui->recvFileList->insertRow(row);
-    QTableWidgetItem *filenameItem = new QTableWidgetItem(filename);
-    QTableWidgetItem *filesizeItem = new QTableWidgetItem(filesize);
-    QTableWidgetItem *statusItem = new QTableWidgetItem(status);
+    if(ui->recvFileList->findItems(filename,Qt::MatchExactly).isEmpty()){
+        // 是新的
+        // 添加
+        int row = ui->recvFileList->rowCount();
+        ui->recvFileList->insertRow(row);
+        QTableWidgetItem *filenameItem = new QTableWidgetItem(filename);
+        QTableWidgetItem *filesizeItem = new QTableWidgetItem(filesize);
+        QTableWidgetItem *statusItem = new QTableWidgetItem(status);
 
-    ui->recvFileList->setItem(row, 0, filenameItem);
-    ui->recvFileList->setItem(row, 1, filesizeItem);
-    ui->recvFileList->setItem(row, 2, statusItem);
+        ui->recvFileList->setItem(row, 0, filenameItem);
+        ui->recvFileList->setItem(row, 1, filesizeItem);
+        ui->recvFileList->setItem(row, 2, statusItem);
+    }else{
+        on_update_recv_file(filename, status);
+    }
+
 
 }
 
 void Rayer::on_update_recv_file(QString filename, QString status)
 {
+//    QString lfn = filename.toLocal8Bit();
+//    QString ls = status.toLocal8Bit();
     qDebug()<<"Filename: "<<filename<<endl
             <<"Updated Status: "<<status<<endl;
 
@@ -206,6 +208,16 @@ void Rayer::on_recvFileList_cellDoubleClicked(int row, int column)
         filepath.replace("/","\\");
         qDebug()<<filepath;
         process.startDetached("explorer /select," + filepath);
+    }else if(qApp->platformName()=="cocoa"){
+        filepath = "file:///"+filepath;
+        QDesktopServices::openUrl(filepath);
     }
 
+}
+
+void Rayer::on_deviceList_itemDoubleClicked(QListWidgetItem *item)
+{
+    qDebug()<<item->text();
+    currentSelectedDevice = item->text();
+    on_connectToDevice_clicked();
 }

@@ -74,6 +74,8 @@ private slots:
 
     void on_recvFileList_cellDoubleClicked(int row, int column);
 
+    void on_deviceList_itemDoubleClicked(QListWidgetItem *item);
+
 public:
     Rayer(QWidget *parent = nullptr);
     ~Rayer();
