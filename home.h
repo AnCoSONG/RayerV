@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QStringList>
 #include <QListWidgetItem>
+#include "filemangaer.h"
 #include "Port.h"
 #include "deviceinfo.h"
 #include "devicefinder.h"
@@ -35,6 +36,7 @@ private:
     DeviceInfo *info;
     DeviceFinder *finder;
     FileTransfer* transfer;
+    FileMangaer* manager;
     QString currentSelectedDevice;
 
 
@@ -60,13 +62,21 @@ private slots:
 
     void on_establishConnection(QString res);
 
+    void on_sendFileStatusChange(QString status);
+
+//    void on_recvFileStatusChange(QString status);
+
+    void on_add_recv_file(QString filename, QString filesize, QString status); //接收文件信号
+
+    void on_update_recv_file(QString filename, QString status); // 更新进度
+
 public:
     Rayer(QWidget *parent = nullptr);
     ~Rayer();
     void init();
     int test = 0;
-    void addDeviceUI(QString dName);
-    void addRecvFileUI(RECV_FILE file);
+//    void addDeviceUI(QString dName);
+//    void addRecvFileUI(RECV_FILE file);
 
 
     // 现在需要实现一些界面相关的东西

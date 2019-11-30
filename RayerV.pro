@@ -20,6 +20,7 @@ SOURCES += \
     devicefinder.cpp \
     deviceinfo.cpp \
     fileblock.cpp \
+    filemangaer.cpp \
     filetransfer.cpp \
     main.cpp \
     home.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     devicefinder.h \
     deviceinfo.h \
     fileblock.h \
+    filemangaer.h \
     filetransfer.h \
     home.h \
     transfersocket.h

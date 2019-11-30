@@ -7,7 +7,12 @@ ConnectionReceiver::ConnectionReceiver(QObject *parent) : QTcpServer (parent)
 
 void ConnectionReceiver::beginListen()
 {
-    listen(QHostAddress::Any, Port::TCP_PORT); //开始监听
+
+    //开始监听
+    if(!listen(QHostAddress::Any, Port::TCP_PORT)){
+
+        qDebug()<<"监听失败";
+    }
 }
 
 void ConnectionReceiver::incomingConnection(qintptr handle){

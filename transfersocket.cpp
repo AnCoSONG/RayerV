@@ -82,12 +82,14 @@ void TransferSocket::sendFile(const QUrl &url)
         requestNewConnection();
     }
 
+    //显示文件发送出的信号
+    //更新界面
+    emit sendFileStatus("开始发送");
+
     //并发发文件
     QtConcurrent::run([this, url]() {
 
-        //显示文件发送出的信号
-        //更新界面
-        emit sendFileStatus("Start");
+
 
         qDebug()<<"开始传送文件"<<url.toLocalFile();
         QTime time;
@@ -125,7 +127,7 @@ void TransferSocket::sendFile(const QUrl &url)
         file.close();
         qDebug()<<"发送完毕";
         // 显示发送完毕的信号
-        emit sendFileStatus("Done");
+        emit sendFileStatus("已发送");
     });
 
 }
@@ -140,7 +142,7 @@ void TransferSocket::processRecvBlock()
         in >> block;
         if(block.isEmpty()){
             qDebug()<<"接收完毕";
-            emit recvFileStatus("Done");
+            //emit recvFileStatus("接收完成");
             return; //说明读完了，这是递归读取结束的标志
         }
 
@@ -154,7 +156,13 @@ void TransferSocket::processRecvBlock()
             socketConfig->recvFiles[fileName].size = 0;
 
             // 此处 通知界面更新
-            emit recvFileStatus("Start");
+//            emit recvFileStatus("开始接收");
+            QMetaObject::invokeMethod(FileMangaer::getInstance(),"addRecvFile", Q_ARG(QString, fileName),
+                                      Q_ARG(QString, QString::number(block.fileSize))
+                                      ,Q_ARG(QString, QString::number(socketConfig->recvFiles[fileName].size)));
+
+
+
 
             QThread::msleep(100); // 线程休眠100ms再接收下一个文件块
 
@@ -165,6 +173,9 @@ void TransferSocket::processRecvBlock()
             socketConfig->recvFiles[fileName].size += block.blockSize;
             socketConfig->recvFiles[fileName].file->write(block.dataBlock);
             qDebug()<<block; //当前block信息打印出来
+//            emit recvFileStatus(QString::number(socketConfig->recvFiles[fileName].size));
+            QMetaObject::invokeMethod(FileMangaer::getInstance(),"updateRecvFile", Q_ARG(QString, fileName)
+                                      ,Q_ARG(QString, QString::number(socketConfig->recvFiles[fileName].size)));
         }
 
         if (socketConfig->recvFiles[fileName].size == block.fileSize){
@@ -172,7 +183,10 @@ void TransferSocket::processRecvBlock()
             socketConfig->recvFiles[fileName].file->close(); // 关闭文件指针
             socketConfig->recvFiles[fileName].file->deleteLater();
             socketConfig->recvFiles.remove(fileName);
-            // 通知界面更新
+            // 通知界面更新 必须用MetaObject::invokeMethod
+//            emit recvFileStatus("接收完成");
+            QMetaObject::invokeMethod(FileMangaer::getInstance(),"updateRecvFile", Q_ARG(QString, fileName)
+                                      ,Q_ARG(QString, "已完成"));
         }
 
         if(time.elapsed() >= 1000 ){

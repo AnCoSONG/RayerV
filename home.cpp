@@ -15,6 +15,9 @@ Rayer::Rayer(QWidget *parent)
     connect(this,&Rayer::statusChange,this,&Rayer::on_statusChange);
     connect(finder, &DeviceFinder::updateDeviceList, this,&Rayer::on_updateDeviceList);
     connect(transfer->getConnectionReceiver(),&ConnectionReceiver::hasNewConnection, this, &Rayer::on_hasNewConnection);
+    connect(manager, &FileMangaer::recv_new_file, this, &Rayer::on_add_recv_file);
+    connect(manager, &FileMangaer::update_recv_file, this, &Rayer::on_update_recv_file);
+
 
 }
 
@@ -30,6 +33,7 @@ void Rayer::init(){
     finder->setDeviceInfo(info);
     transfer = FileTransfer::getInstance();
     transfer->setDeviceInfo(info);
+    manager = FileMangaer::getInstance();
 }
 
 void Rayer::on_connectToDevice_clicked()
@@ -40,6 +44,8 @@ void Rayer::on_connectToDevice_clicked()
     transfer->setAccessPoint(currentSelectedDevice);
 
     connect(transfer->getTransferSocket(), &TransferSocket::establishConnection, this, &Rayer::on_establishConnection);
+    connect(transfer->getTransferSocket(), &TransferSocket::sendFileStatus, this, &Rayer::on_sendFileStatusChange);
+//    connect(transfer->getTransferSocket(), &TransferSocket::recvFileStatus,this, &Rayer::on_recvFileStatusChange);
 
 }
 
@@ -128,3 +134,46 @@ void Rayer::on_establishConnection(QString res)
 
     }
 }
+
+void Rayer::on_sendFileStatusChange(QString status)
+{
+    qDebug()<<"发送状态更新";
+    emit statusChange(status);
+    QMessageBox::information(nullptr, "成功","已发送"); // 发送成功弹出确认。
+}
+
+void Rayer::on_add_recv_file(QString filename, QString filesize, QString status)
+{
+    qDebug()<<"Filename: "<<filename<<endl
+            <<"Filesize: "<<filesize<<endl
+            <<"Status: "<<status<<endl;
+    // 添加
+    int row = ui->recvFileList->rowCount();
+    ui->recvFileList->insertRow(row);
+    QTableWidgetItem *filenameItem = new QTableWidgetItem(filename);
+    QTableWidgetItem *filesizeItem = new QTableWidgetItem(filesize);
+    QTableWidgetItem *statusItem = new QTableWidgetItem(status);
+
+    ui->recvFileList->setItem(row, 0, filenameItem);
+    ui->recvFileList->setItem(row, 1, filesizeItem);
+    ui->recvFileList->setItem(row, 2, statusItem);
+
+}
+
+void Rayer::on_update_recv_file(QString filename, QString status)
+{
+    qDebug()<<"Filename: "<<filename<<endl
+            <<"Updated Status: "<<status<<endl;
+
+    // 更新
+    QTableWidgetItem* item = ui->recvFileList->findItems(filename,Qt::MatchExactly)[0];
+    ui->recvFileList->setItem(item->row(), 2, new QTableWidgetItem(status));
+
+
+}
+
+//void Rayer::on_recvFileStatusChange(QString status)
+//{
+//    qDebug()<<"接收状态更新";
+//    emit statusChange(status);
+//}

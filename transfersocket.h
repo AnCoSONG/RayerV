@@ -3,6 +3,8 @@
 
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QMessageBox>
+#include "filemangaer.h"
 #include "Port.h"
 class TransferSocketPrivate;
 class TransferSocket : public QTcpSocket
@@ -23,7 +25,7 @@ signals:
     void hasError(const QString &error);
     void establishConnection(QString result);
     void sendFileStatus(QString status);
-    void recvFileStatus(QString status);
+//    void recvFileStatus(QString status);
 
 public slots:
     void processRecvBlock(); // 处理接收到的block
