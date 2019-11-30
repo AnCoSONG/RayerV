@@ -21,11 +21,17 @@ FileTransfer::FileTransfer(QObject *parent) : QObject(parent)
 FileTransfer::~FileTransfer(){
     qDebug()<<"closing file transfer";
     delete server;
-    delete info;
-    foreach (QThread* l, threadLists) {
-        l->deleteLater();
+//    delete info;
+    if(!threadLists.isEmpty()){
+        int i = 0;
+        foreach (QThread* l, threadLists) {
+            l->deleteLater();
+            qDebug()<< ++i;
+        }
+
     }
     qDebug()<<"Closed";
+
 }
 
 void FileTransfer::setAccessPoint(const QString &name){ //界面上只显示名字，因此需要从名字拿到ip地址

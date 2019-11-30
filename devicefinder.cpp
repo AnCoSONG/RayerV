@@ -76,7 +76,7 @@ QMap<QString, QHostAddress> DeviceFinder::getAccessPoint()
 void DeviceFinder::processDatagram(){
     while (hasPendingDatagrams()) {
         QNetworkDatagram datagram = receiveDatagram();
-        qDebug()<<"123";
+//        qDebug()<<"123";
         if (!datagram.senderAddress().isNull() && datagram.senderPort() != -1 ){
             qDebug()<<datagram.data()<<" "<<datagram.senderAddress();
             if(datagram.data() == "[DISCOVER]") {
@@ -85,7 +85,7 @@ void DeviceFinder::processDatagram(){
                     if(datagram.senderAddress().toIPv4Address()!=deviceInfo->getLocalAddress().toIPv4Address()){
                         // 若不是自己 发送NAME个人信息
                         qDebug()<<"收到嗅探信号";
-                        writeDatagram("[NAME]##"+deviceInfo->getName().toLocal8Bit(),
+                        writeDatagram("[NAME]##"+deviceInfo->getName().toUtf8(),
                                       datagram.senderAddress(),quint16(datagram.senderPort()));
                     }
                 }else{
@@ -94,7 +94,7 @@ void DeviceFinder::processDatagram(){
             }
             if (datagram.data().left(8) == "[NAME]##"){
                 // 收到NAME个人信息
-                QString name = QString::fromLocal8Bit(datagram.data().mid(8));
+                QString name = QString::fromUtf8(datagram.data().mid(8));
                 if(access_point[name].isNull()){
                     access_point[name] = datagram.senderAddress();
                     qDebug()<<"发现设备:"<<access_point;

@@ -24,10 +24,15 @@ Rayer::Rayer(QWidget *parent)
 Rayer::~Rayer()
 {
     delete ui;
+//    qDebug()<<1;
 //    delete info;
+//    qDebug()<<2;
 //    delete finder;
+//    qDebug()<<3;
 //    delete manager;
+//    qDebug()<<4;
 //    delete transfer;
+//    qDebug()<<5;
 }
 
 void Rayer::init(){
