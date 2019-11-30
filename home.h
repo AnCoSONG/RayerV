@@ -13,6 +13,8 @@
 #include "deviceinfo.h"
 #include "devicefinder.h"
 #include "filetransfer.h"
+#include <QDesktopServices>
+#include <QProcess>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Rayer; }
@@ -69,6 +71,8 @@ private slots:
     void on_add_recv_file(QString filename, QString filesize, QString status); //接收文件信号
 
     void on_update_recv_file(QString filename, QString status); // 更新进度
+
+    void on_recvFileList_cellDoubleClicked(int row, int column);
 
 public:
     Rayer(QWidget *parent = nullptr);

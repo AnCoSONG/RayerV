@@ -18,7 +18,6 @@ Rayer::Rayer(QWidget *parent)
     connect(manager, &FileMangaer::recv_new_file, this, &Rayer::on_add_recv_file);
     connect(manager, &FileMangaer::update_recv_file, this, &Rayer::on_update_recv_file);
 
-
 }
 
 Rayer::~Rayer()
@@ -195,3 +194,18 @@ void Rayer::on_update_recv_file(QString filename, QString status)
 //    qDebug()<<"接收状态更新";
 //    emit statusChange(status);
 //}
+
+void Rayer::on_recvFileList_cellDoubleClicked(int row, int column)
+{
+    QUrl path;
+    QProcess process;
+    QString filepath = qApp->applicationDirPath() + "/FileRecv/" +  ui->recvFileList->item(row, 0)->text();
+    qDebug()<<qApp->platformName();
+
+    if(qApp->platformName()=="windows"){
+        filepath.replace("/","\\");
+        qDebug()<<filepath;
+        process.startDetached("explorer /select," + filepath);
+    }
+
+}
