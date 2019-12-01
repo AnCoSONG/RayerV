@@ -122,13 +122,14 @@ void DeviceFinder::processDatagram(){
             if (datagram.data().left(9) == "[QUERY]##"){
                 // 收到查询请求
                 QString filename = QString::fromUtf8(datagram.data().mid(9));
+                qDebug()<<"query path:"<<deviceInfo->getLocalSharePath()+"/"+filename;
                 QFileInfo file(deviceInfo->getLocalSharePath()+"/"+filename);
                 if(file.exists()){
                     // 发送存在信号
                     writeDatagram("[EXIST]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
                     // 发出“收到查询并存在信号”
 
-                    emit recvQueryAndExist(datagram.senderAddress(),file.filePath());
+                    emit recvQueryAndExist(datagram.senderAddress(),deviceInfo->getLocalSharePath()+"/"+filename);
                 }else{
                     writeDatagram("[NO]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
                 }
@@ -136,17 +137,26 @@ void DeviceFinder::processDatagram(){
 
             // 收到存在信号
             if(datagram.data().left(9)=="[EXIST]##"){
-                QString deviceName = QString::fromUtf8(datagram.data().mid(9));
-                // 发出“找到文件信号”
-                emit queryFind(deviceName);
+                if(datagram.senderAddress().toIPv4Address()!=deviceInfo->getLocalAddress().toIPv4Address()){
+                    //如果不是自己
+                    QString deviceName = QString::fromUtf8(datagram.data().mid(9));
+                    // 发出“找到文件信号”
+                    emit queryFind(deviceName);
+                }
+
 
             }
 
             // 收到没找到信号
             if(datagram.data().left(6)=="[NO]##"){
-                QString deviceName = QString::fromUtf8(datagram.data().mid(9));
-                // 发出“该设备没找到文件信号”
-                emit queryNotFind(deviceName);
+                if(datagram.senderAddress().toIPv4Address()!=deviceInfo->getLocalAddress().toIPv4Address()){
+
+                    //如果不是自己
+                    QString deviceName = QString::fromUtf8(datagram.data().mid(9));
+                    // 发出“该设备没找到文件信号”
+                    emit queryNotFind(deviceName);
+                }
+
             }
             /*
              * 搜索

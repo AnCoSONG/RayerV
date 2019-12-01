@@ -263,7 +263,8 @@ void Rayer::on_searchAndDownload_clicked()
     if(!filenameTobeSearch.isEmpty()){
         qDebug()<<"要搜索的文件:"<<filenameTobeSearch;
         finder->queryFile(filenameTobeSearch);
-        QMessageBox::information(this,"已发送","已广播查询请求\n文件名:"+filenameTobeSearch);
+        emit statusChange("已广播查询请求");
+        // QMessageBox::information(this,"已发送","已广播查询请求\n文件名:"+filenameTobeSearch);
     }else{
         QMessageBox::warning(this,"警告","请正确输入搜索文件名后再重试");
     }
@@ -289,7 +290,10 @@ void Rayer::on_recvQueryAndExist(QHostAddress address,QString filepath)
 {
     finder->setAccessPoint("Query Device",address);
     transfer->setAccessPoint("Query Device");
-    transfer->sendFile(QUrl(filepath));
+    qDebug()<<"origin localpath:"<<filepath;
+    QUrl url = QUrl::fromLocalFile(filepath);
+    qDebug()<<"test tolocal:"<<url.toLocalFile();
+    transfer->sendFile(url);
 
 }
 
