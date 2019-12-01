@@ -120,19 +120,23 @@ void DeviceFinder::processDatagram(){
              * 搜索
              */
             if (datagram.data().left(9) == "[QUERY]##"){
-                // 收到查询请求
-                QString filename = QString::fromUtf8(datagram.data().mid(9));
-                qDebug()<<"query path:"<<deviceInfo->getLocalSharePath()+"/"+filename;
-                QFileInfo file(deviceInfo->getLocalSharePath()+"/"+filename);
-                if(file.exists()){
-                    // 发送存在信号
-                    writeDatagram("[EXIST]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
-                    // 发出“收到查询并存在信号”
 
-                    emit recvQueryAndExist(datagram.senderAddress(),deviceInfo->getLocalSharePath()+"/"+filename);
-                }else{
-                    writeDatagram("[NO]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
+                if(datagram.senderAddress().toIPv4Address()!=deviceInfo->getLocalAddress().toIPv4Address()){
+                    // 收到查询请求
+                    QString filename = QString::fromUtf8(datagram.data().mid(9));
+                    qDebug()<<"query path:"<<deviceInfo->getLocalSharePath()+"/"+filename;
+                    QFileInfo file(deviceInfo->getLocalSharePath()+"/"+filename);
+                    if(file.exists()){
+                        // 发送存在信号
+                        writeDatagram("[EXIST]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
+                        // 发出“收到查询并存在信号”
+
+                        emit recvQueryAndExist(datagram.senderAddress(),deviceInfo->getLocalSharePath()+"/"+filename);
+                    }else{
+                        writeDatagram("[NO]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
+                    }
                 }
+
             }
 
             // 收到存在信号
