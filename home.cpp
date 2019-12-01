@@ -300,3 +300,36 @@ void Rayer::on_recvQueryAndExist(QHostAddress address,QString filepath)
 /*
  * 搜索
  */
+
+void Rayer::on_addSharedFile_clicked()
+{
+    QString localsharedPath = info->getLocalSharePath();
+    QList<QUrl> addedUrls = QFileDialog::getOpenFileUrls(this,tr("选择您要分享的文件"),QDir::rootPath(),tr("All Files(*.*)"));
+    foreach (QUrl l, addedUrls) {
+        qDebug()<<l.toLocalFile();
+        qDebug()<<l.fileName();
+        QString sourcePath = l.toLocalFile();
+        QString destPath = localsharedPath+"/"+l.fileName();
+        qDebug()<<destPath;
+        QFile df(destPath);
+        if(df.exists()){
+            df.remove();
+        }
+        QFile::copy(sourcePath, destPath);
+        qDebug()<<df.exists();
+        df.close();
+    }
+}
+
+void Rayer::on_openSharedDir_clicked()
+{
+    QProcess process;
+    QString sharedPath = info->getLocalSharePath();
+    if(qApp->platformName()=="windows"){
+        sharedPath.replace("/","\\");
+        process.startDetached("explorer /e,"+sharedPath);
+    }else if(qApp->platformName()=="cocoa"){
+        process.startDetached("open "+sharedPath);
+    }
+
+}

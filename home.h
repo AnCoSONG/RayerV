@@ -97,6 +97,10 @@ private slots:
      * 搜索
      */
 
+    void on_addSharedFile_clicked();
+
+    void on_openSharedDir_clicked();
+
 public:
     Rayer(QWidget *parent = nullptr);
     ~Rayer();
