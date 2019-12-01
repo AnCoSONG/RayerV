@@ -55,6 +55,18 @@ void DeviceFinder::setAccessPoint(QString name, QHostAddress addr)
     this->access_point[name] = addr;
 }
 
+/*
+ * 搜索
+ */
+void DeviceFinder::queryFile(QString &filename)
+{
+    qDebug()<<"Query File:"<<filename<<endl;
+    writeDatagram("[QUERY]##"+filename.toUtf8(),QHostAddress::Broadcast,Port::UDP_PORT);
+}
+/*
+ * 搜索
+ */
+
 
 // 开始搜索
 void DeviceFinder::discover()
@@ -104,6 +116,41 @@ void DeviceFinder::processDatagram(){
                 }
 
             }
+            /*
+             * 搜索
+             */
+            if (datagram.data().left(9) == "[QUERY]##"){
+                // 收到查询请求
+                QString filename = QString::fromUtf8(datagram.data().mid(9));
+                QFileInfo file(deviceInfo->getLocalSharePath()+"/"+filename);
+                if(file.exists()){
+                    // 发送存在信号
+                    writeDatagram("[EXIST]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
+                    // 发出“收到查询并存在信号”
+
+                    emit recvQueryAndExist(datagram.senderAddress(),file.filePath());
+                }else{
+                    writeDatagram("[NO]##"+deviceInfo->getName().toUtf8(),datagram.senderAddress(),quint16(datagram.senderPort()));
+                }
+            }
+
+            // 收到存在信号
+            if(datagram.data().left(9)=="[EXIST]##"){
+                QString deviceName = QString::fromUtf8(datagram.data().mid(9));
+                // 发出“找到文件信号”
+                emit queryFind(deviceName);
+
+            }
+
+            // 收到没找到信号
+            if(datagram.data().left(6)=="[NO]##"){
+                QString deviceName = QString::fromUtf8(datagram.data().mid(9));
+                // 发出“该设备没找到文件信号”
+                emit queryNotFind(deviceName);
+            }
+            /*
+             * 搜索
+             */
         }
     }
 }

@@ -41,6 +41,8 @@ private:
     FileMangaer* manager;
     QString currentSelectedDevice;
 
+    QString filenameTobeSearch;
+
 
     Ui::Rayer *ui;
 
@@ -75,6 +77,25 @@ private slots:
     void on_recvFileList_cellDoubleClicked(int row, int column);
 
     void on_deviceList_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_openRecvPath_clicked();
+
+    void on_about_clicked();
+    /*
+     * 搜索
+     */
+
+    void on_searchAndDownload_clicked();
+
+    void on_searchLine_textChanged(const QString &arg1);
+
+    void on_queryNotFound(QString deviceName); // 搜索找到
+    void on_queryFound(QString deviceName); // 搜索没有找到
+    void on_recvQueryAndExist(QHostAddress address,QString filepath); // 收到搜索请求并找到文件
+
+    /*
+     * 搜索
+     */
 
 public:
     Rayer(QWidget *parent = nullptr);

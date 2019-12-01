@@ -1,6 +1,6 @@
 #include "deviceinfo.h"
 
-DeviceInfo::DeviceInfo()
+DeviceInfo::DeviceInfo(QObject* parent):QObject(parent)
 {
     // 初始化设备信息
     QString localname = QHostInfo::localHostName();
@@ -12,7 +12,15 @@ DeviceInfo::DeviceInfo()
             break;
         }
     }
-    qDebug()<<"Your device name:"<<name<<endl<<"Your device IP:"<<localAddress.toString()<<endl;
+    localSharePath = QDir::homePath()+"/Rayer/Shared";
+
+    QDir dir;
+    if (!dir.exists(localSharePath)) {
+        dir.mkpath(localSharePath);
+    }
+    qDebug()<<"Your device name:"<<name<<endl
+            <<"Your device IP:"<<localAddress.toString()<<endl
+            <<"Your local sharing path:"<<localSharePath<<endl;
 }
 
 QString DeviceInfo::getName()
@@ -27,6 +35,11 @@ QHostAddress DeviceInfo::getLocalAddress()
 
 QString DeviceInfo::getLocalAddressString(){
     return localAddress.toString();
+}
+
+QString DeviceInfo::getLocalSharePath()
+{
+    return localSharePath;
 }
 
 DeviceInfo* DeviceInfo::getInstance(){

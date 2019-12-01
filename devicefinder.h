@@ -26,9 +26,26 @@ public:
     void startDiscover();
     void stopDiscover();
     void setAccessPoint(QString name, QHostAddress addr);
+    /*
+     * 搜索
+     */
+    void queryFile(QString &filename);
+    /*
+     * 搜索
+     */
 
 signals:
     void updateDeviceList(QMap<QString, QHostAddress> *access_points);
+    /*
+     * 搜索
+     */
+    void queryNotFind(QString deviceName);
+    void queryFind(QString deviceName);
+    void recvQueryAndExist(QHostAddress address,QString filepath);
+    /*
+     * 搜索
+     */
+
 
 private:
     enum STATUS{ WAIT, DISCOVER };  // 2种状态建立连接

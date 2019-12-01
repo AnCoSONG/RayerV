@@ -4,18 +4,22 @@
 #include <QObject>
 #include <QHostAddress>
 #include <QHostInfo>
+#include <QDir>
 
-class DeviceInfo
+class DeviceInfo:public QObject
 {
+    Q_OBJECT
 private:
     QString name = "unknown";
     QHostAddress localAddress;
-    DeviceInfo();
+    QString localSharePath;
+    DeviceInfo(QObject* parent = nullptr);
 public:
     QString getName();
     QHostAddress getLocalAddress();
     static DeviceInfo* getInstance();
     QString getLocalAddressString();
+    QString getLocalSharePath();
 };
 
 #endif // DEVICEINFO_H

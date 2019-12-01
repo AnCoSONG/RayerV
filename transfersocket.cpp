@@ -134,7 +134,7 @@ void TransferSocket::sendFile(const QUrl &url)
 
 void TransferSocket::processRecvBlock()
 {
-    static QTime time = QTime::currentTime();
+//    static QTime time = QTime::currentTime();
     if(socketConfig->recvData.size() > 0 ){
         FileBlock block;
         QDataStream in(&socketConfig->recvData, QIODevice::ReadOnly);

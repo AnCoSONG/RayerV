@@ -35,9 +35,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>240</x>
       <y>20</y>
-      <width>561</width>
+      <width>301</width>
       <height>61</height>
      </rect>
     </property>
@@ -254,8 +254,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>440</x>
       <y>190</y>
-      <width>256</width>
-      <height>311</height>
+      <width>272</width>
+      <height>261</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -283,9 +283,12 @@ p, li { white-space: pre-wrap; }
      <number>27</number>
     </attribute>
     <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>79</number>
+     <number>90</number>
     </attribute>
     <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
      <bool>false</bool>
     </attribute>
     <column>
@@ -332,13 +335,13 @@ p, li { white-space: pre-wrap; }
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="madeByMe">
+   <widget class="QPushButton" name="about">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>530</y>
+      <x>610</x>
+      <y>30</y>
       <width>101</width>
-      <height>31</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
@@ -348,7 +351,7 @@ p, li { white-space: pre-wrap; }
      </font>
     </property>
     <property name="text">
-     <string>宋晋瑜 制作</string>
+     <string>关于</string>
     </property>
     <property name="autoDefault">
      <bool>false</bool>
@@ -388,6 +391,84 @@ p, li { white-space: pre-wrap; }
      <set>Qt::AlignCenter</set>
     </property>
     <property name="wordWrap">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="openRecvPath">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>470</y>
+      <width>271</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Microsoft YaHei</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>打开接收目录</string>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>true</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="searchLine">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>530</y>
+      <width>321</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="placeholderText">
+     <string>输入带后缀的文件名</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="searchAndDownload">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>530</y>
+      <width>271</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Microsoft YaHei</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>搜索并下载</string>
+    </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+    <property name="default">
+     <bool>true</bool>
+    </property>
+    <property name="flat">
      <bool>false</bool>
     </property>
    </widget>
