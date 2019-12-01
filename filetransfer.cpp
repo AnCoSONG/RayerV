@@ -1,5 +1,6 @@
 #include "filetransfer.h"
 #include <QThread>
+#include<QCoreApplication>
 
 FileTransfer *FileTransfer::getInstance()
 {
@@ -16,6 +17,11 @@ FileTransfer::FileTransfer(QObject *parent) : QObject(parent)
             client->deleteLater();
         client = qobject_cast<TransferSocket *>(socket);
     });
+    QDir dir;
+    if (!dir.exists(QCoreApplication::applicationDirPath() + "/FileRecv/")) {
+        dir.mkpath(QCoreApplication::applicationDirPath() + "/FileRecv/");
+    }
+    qDebug()<<QCoreApplication::applicationDirPath() + "/FileRecv/";
 }
 
 FileTransfer::~FileTransfer(){
